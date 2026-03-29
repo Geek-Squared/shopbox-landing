@@ -33,7 +33,7 @@
           <li><a href="/documentation" class="nav-link">How to Test</a></li>
           <li><a href="#features" class="nav-link">Features</a></li>
           <li><a href="#contact" class="nav-link">Contact</a></li>
-          <li><button class="btn-primary">Install Shopbox</button></li>
+          <li><button class="btn-primary" onclick="openInstallModal('FREE')">Install Shopbox</button></li>
         </ul>
         
         <div class="mobile-toggle" style="display: none;">
@@ -57,7 +57,7 @@
           <h1>The <span>Bridge</span> Between Your Store & Socials</h1>
           <p>Deliver automated, conversational shopping experiences with a real-time system that converts questions into sales while you sleep.</p>
           <div class="hero-ctas">
-            <button class="btn-primary">Add to Shopify</button>
+            <button class="btn-primary" onclick="openInstallModal('FREE')">Add to Shopify</button>
             <button class="btn-secondary">View Live Demo</button>
           </div>
           
@@ -150,13 +150,33 @@
           <h2 style="color: white; font-size: 56px; margin-bottom: 24px;">Ready to Scale Your Conversational Sales?</h2>
           <p style="color: white; opacity: 0.9; margin-bottom: 40px;">Join thousands of merchants who are using Shopbox to automate their social selling.</p>
           <div class="hero-ctas">
-            <button class="btn-secondary" style="background: white; color: var(--sb-primary); padding: 18px 40px; font-size: 18px;">Start Your 14-Day Free Trial</button>
+            <button class="btn-secondary" onclick="openInstallModal('FREE')" style="background: white; color: var(--sb-primary); padding: 18px 40px; font-size: 18px;">Start Your 14-Day Free Trial</button>
           </div>
           <p style="font-size: 13px; margin-top: 20px; color: rgba(255,255,255,0.7);">No credit card required. Cancel anytime.</p>
         </div>
       </div>
     </section>
   </main>
+
+  <!-- Installation Modal -->
+  <div class="modal-overlay" id="installModal">
+      <div class="modal-content">
+          <button class="modal-close" onclick="closeInstallModal()">
+              <i data-lucide="x"></i>
+          </button>
+          <h2 class="modal-title">Install Shopbox</h2>
+          <p class="modal-subtitle">Enter your Shopify store URL to begin your 14-day free trial.</p>
+          
+          <form class="install-form" id="installForm">
+              <div class="form-group">
+                  <label for="shopUrl">Shopify Store URL</label>
+                  <input type="text" id="shopUrl" class="form-input" placeholder="brand-name.myshopify.com" required>
+              </div>
+              <button type="submit" class="install-submit">Continue to Shopify</button>
+              <p style="font-size: 12px; color: var(--sb-neutral); text-align: center; margin-top: 4px;">Then you'll approve the app in your Shopify Admin.</p>
+          </form>
+      </div>
+  </div>
 
   <!-- Footer -->
   <footer>
@@ -170,15 +190,6 @@
           <p>Empowering Shopify merchants with next-generation conversational commerce tools.</p>
         </div>
         
-        <!-- <div class="footer-links-group">
-          <h4>Platform</h4>
-          <ul>
-            <li><a href="#">Shopify App Store</a></li>
-            <li><a href="#">Merchant Login</a></li>
-            <li><a href="#">API Documentation</a></li>
-          </ul>
-        </div> -->
-        
         <div class="footer-links-group">
           <h4>Support</h4>
           <ul>
@@ -188,15 +199,6 @@
             <li><a href="#contact">Contact Us</a></li>
           </ul>
         </div>
-        
-        <!-- <div class="footer-links-group">
-          <h4>Connect</h4>
-          <ul>
-            <li><a href="#">Twitter</a></li>
-            <li><a href="#">LinkedIn</a></li>
-            <li><a href="#">Instagram</a></li>
-          </ul>
-        </div> -->
       </div>
       
       <div class="footer-bottom">
@@ -206,5 +208,41 @@
   </footer>
 
   <script type="module" src="/main.js"></script>
+  <script>
+    lucide.createIcons();
+
+    // Installation Logic
+    let currentPlanId = 'FREE';
+    const installModal = document.getElementById('installModal');
+    const installForm = document.getElementById('installForm');
+    const shopUrlInput = document.getElementById('shopUrl');
+
+    window.openInstallModal = (planId) => {
+        currentPlanId = planId || 'FREE';
+        installModal.style.display = 'flex';
+        shopUrlInput.focus();
+    };
+
+    window.closeInstallModal = () => {
+        installModal.style.display = 'none';
+    };
+
+    // Close on overlay click
+    installModal.addEventListener('click', (e) => {
+        if (e.target === installModal) closeInstallModal();
+    });
+
+    installForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const shopUrl = shopUrlInput.value.trim();
+        if (!shopUrl) return;
+
+        // Normalize shop URL
+        let normalizedShop = shopUrl.replace(/^https?:\/\//, '').replace(/\/$/, '');
+        
+        const backendBaseUrl = 'https://shopbox-api.railway.app';
+        window.location.href = `${backendBaseUrl}/api/shopify/auth?shop=${normalizedShop}&plan=${currentPlanId}`;
+    });
+  </script>
 </body>
 </html>

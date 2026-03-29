@@ -107,7 +107,7 @@
             gap: 20px;
             max-width: 1200px;
             margin: 0 auto;
-            align-items: start;
+            align-items: stretch;
         }
         .pricing-card {
             background: white;
@@ -368,17 +368,6 @@
         /* ── Divider ────────────────────────────────── */
         .price-divider { border: 0; border-top: 1px solid var(--sb-neutral-border); margin: 20px 0; }
 
-        /* ── Responsive ─────────────────────────────── */
-        @media (max-width: 1100px) {
-            .pricing-grid { grid-template-columns: repeat(2, 1fr); }
-            .pricing-hero h1 { font-size: 44px; }
-        }
-        @media (max-width: 700px) {
-            .pricing-grid { grid-template-columns: 1fr; }
-            .pricing-hero h1 { font-size: 36px; }
-            .billing-info { grid-template-columns: 1fr; }
-            .pricing-hero { padding: 120px 0 60px; }
-        }
     </style>
 </head>
 <body>
@@ -393,7 +382,7 @@
                 <div style="display: flex; gap: 30px; align-items: center;">
                     <a href="/" class="nav-link" style="font-weight: 600; font-size: 15px;">Home</a>
                     <a href="/documentation" class="nav-link" style="font-weight: 600; font-size: 15px;">How to Test</a>
-                    <a href="/" class="btn-primary">Get Started</a>
+                    <button class="btn-primary" onclick="openInstallModal('FREE')">Get Started</button>
                 </div>
             </nav>
         </div>
@@ -459,7 +448,7 @@
                         <li><i data-lucide="check" class="check-icon" style="width:16px;height:16px;"></i> "Powered by Shopbox" branding</li>
                     </ul>
 
-                    <button class="plan-cta secondary">Install Free</button>
+                    <button class="plan-cta secondary" onclick="openInstallModal('FREE')">Install Free</button>
                     <p class="plan-cta-note">No credit card required</p>
                 </div>
 
@@ -502,7 +491,7 @@
                         <li><i data-lucide="check" class="check-icon" style="width:16px;height:16px;"></i> Order Management Dashboard</li>
                     </ul>
 
-                    <button class="plan-cta secondary">Start 14-Day Free Trial</button>
+                    <button class="plan-cta secondary" onclick="openInstallModal('STARTER')">Start 14-Day Free Trial</button>
                     <p class="plan-cta-note">No credit card required</p>
                 </div>
 
@@ -551,7 +540,7 @@
                         <li><i data-lucide="check" class="check-icon" style="width:16px;height:16px;"></i> Priority Email Support</li>
                     </ul>
 
-                    <button class="plan-cta primary">Start 14-Day Free Trial</button>
+                    <button class="plan-cta primary" onclick="openInstallModal('GROWTH')">Start 14-Day Free Trial</button>
                     <p class="plan-cta-note">No credit card required</p>
                 </div>
 
@@ -594,7 +583,7 @@
                         <li><i data-lucide="check" class="check-icon" style="width:16px;height:16px;"></i> Custom SLA &amp; Uptime Guarantee</li>
                     </ul>
 
-                    <button class="plan-cta enterprise">Start 14-Day Free Trial</button>
+                    <button class="plan-cta enterprise" onclick="openInstallModal('ENTERPRISE')">Start 14-Day Free Trial</button>
                     <p class="plan-cta-note">No credit card required</p>
                 </div>
 
@@ -619,6 +608,26 @@
         </div><!-- /container -->
     </section>
 
+    <!-- Installation Modal -->
+    <div class="modal-overlay" id="installModal">
+        <div class="modal-content">
+            <button class="modal-close" onclick="closeInstallModal()">
+                <i data-lucide="x"></i>
+            </button>
+            <h2 class="modal-title">Install Shopbox</h2>
+            <p class="modal-subtitle">Enter your Shopify store URL to begin your 14-day free trial on the <span id="selectedPlanName" style="font-weight: 700; color: var(--sb-primary);">STARTER</span> plan.</p>
+            
+            <form class="install-form" id="installForm">
+                <div class="form-group">
+                    <label for="shopUrl">Shopify Store URL</label>
+                    <input type="text" id="shopUrl" class="form-input" placeholder="brand-name.myshopify.com" required>
+                </div>
+                <button type="submit" class="install-submit">Continue to Shopify</button>
+                <p style="font-size: 12px; color: var(--sb-neutral); text-align: center; margin-top: 4px;">Then you'll approve the app in your Shopify Admin.</p>
+            </form>
+        </div>
+    </div>
+
     <!-- Footer -->
     <footer style="padding: 60px 0; background: var(--sb-neutral-light); text-align: center;">
         <div class="container">
@@ -642,6 +651,41 @@
             annualPrices.forEach(el => el.style.display = isAnnual ? 'inline' : 'none');
             monthlyNotes.forEach(el => el.style.display = isAnnual ? 'none' : 'inline');
             annualNotes.forEach(el => el.style.display = isAnnual ? 'inline' : 'none');
+        });
+
+        // Installation Logic
+        let currentPlanId = 'FREE';
+        const installModal = document.getElementById('installModal');
+        const selectedPlanNameDisplay = document.getElementById('selectedPlanName');
+        const installForm = document.getElementById('installForm');
+        const shopUrlInput = document.getElementById('shopUrl');
+
+        const openInstallModal = (planId) => {
+            currentPlanId = planId;
+            selectedPlanNameDisplay.textContent = planId;
+            installModal.style.display = 'flex';
+            shopUrlInput.focus();
+        };
+
+        const closeInstallModal = () => {
+            installModal.style.display = 'none';
+        };
+
+        // Close on overlay click
+        installModal.addEventListener('click', (e) => {
+            if (e.target === installModal) closeInstallModal();
+        });
+
+        installForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const shopUrl = shopUrlInput.value.trim();
+            if (!shopUrl) return;
+
+            // Normalize shop URL (strip https:// etc)
+            let normalizedShop = shopUrl.replace(/^https?:\/\//, '').replace(/\/$/, '');
+            
+            const backendBaseUrl = 'https://shopbox-api.railway.app';
+            window.location.href = `${backendBaseUrl}/api/shopify/auth?shop=${normalizedShop}&plan=${currentPlanId}`;
         });
     </script>
 </body>

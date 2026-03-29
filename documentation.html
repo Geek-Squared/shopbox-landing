@@ -143,6 +143,26 @@
         </div>
     </div>
 
+    <!-- Installation Modal -->
+    <div class="modal-overlay" id="installModal">
+        <div class="modal-content">
+            <button class="modal-close" onclick="closeInstallModal()">
+                <i data-lucide="x"></i>
+            </button>
+            <h2 class="modal-title">Install Shopbox</h2>
+            <p class="modal-subtitle">Enter your Shopify store URL to begin your 14-day free trial.</p>
+            
+            <form class="install-form" id="installForm">
+                <div class="form-group">
+                    <label for="shopUrl">Shopify Store URL</label>
+                    <input type="text" id="shopUrl" class="form-input" placeholder="brand-name.myshopify.com" required>
+                </div>
+                <button type="submit" class="install-submit">Continue to Shopify</button>
+                <p style="font-size: 12px; color: var(--sb-neutral); text-align: center; margin-top: 4px;">Then you'll approve the app in your Shopify Admin.</p>
+            </form>
+        </div>
+    </div>
+
     <footer style="padding: 60px 0; background: var(--sb-neutral-light); text-align: center; margin-top: 80px;">
         <div class="container">
             <p style="color: var(--sb-neutral); font-size: 14px;">&copy; 2026 Shopbox by Adberry. All rights reserved.</p>
@@ -151,6 +171,39 @@
 
     <script>
         lucide.createIcons();
+
+        // Installation Logic
+        let currentPlanId = 'FREE';
+        const installModal = document.getElementById('installModal');
+        const installForm = document.getElementById('installForm');
+        const shopUrlInput = document.getElementById('shopUrl');
+
+        window.openInstallModal = (planId) => {
+            currentPlanId = planId || 'FREE';
+            installModal.style.display = 'flex';
+            shopUrlInput.focus();
+        };
+
+        window.closeInstallModal = () => {
+            installModal.style.display = 'none';
+        };
+
+        // Close on overlay click
+        installModal.addEventListener('click', (e) => {
+            if (e.target === installModal) closeInstallModal();
+        });
+
+        installForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const shopUrl = shopUrlInput.value.trim();
+            if (!shopUrl) return;
+
+            // Normalize shop URL
+            let normalizedShop = shopUrl.replace(/^https?:\/\//, '').replace(/\/$/, '');
+            
+            const backendBaseUrl = 'https://shopbox-api.railway.app';
+            window.location.href = `${backendBaseUrl}/api/shopify/auth?shop=${normalizedShop}&plan=${currentPlanId}`;
+        });
     </script>
 </body>
 </html>
