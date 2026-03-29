@@ -4,91 +4,391 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pricing Plans | Shopbox by Adberry</title>
+    <meta name="description" content="Simple, transparent pricing for every stage of growth. From free to enterprise — Shopbox scales with your social sales.">
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/style.css">
     <script src="https://unpkg.com/lucide@latest"></script>
     <style>
-        .pricing-hero { background: var(--sb-gradient-soft); padding: 120px 0 60px; text-align: center; }
-        .pricing-hero h1 { font-size: 56px; margin-bottom: 16px; }
-        .pricing-hero p { font-size: 20px; color: var(--sb-neutral); max-width: 600px; margin: 0 auto; }
-        
-        .pricing-grid { 
-            display: grid; 
-            grid-template-columns: repeat(3, 1fr); 
-            gap: 30px; 
-            padding: 80px 0; 
-            max-width: 1100px; 
-            margin: 0 auto; 
+        /* ── Hero ───────────────────────────────────── */
+        .pricing-hero {
+            background: var(--sb-gradient-soft);
+            padding: 140px 0 80px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
         }
-        
-        .pricing-card { 
-            background: white; 
-            border-radius: var(--sb-radius); 
-            border: 1px solid var(--sb-neutral-border); 
-            padding: 40px; 
-            display: flex; 
-            flex-direction: column; 
+        .pricing-hero::before {
+            content: '';
+            position: absolute;
+            width: 600px; height: 600px;
+            background: radial-gradient(circle, rgba(0,128,96,0.08) 0%, transparent 70%);
+            top: -100px; right: -100px;
+            border-radius: 50%;
+        }
+        .pricing-hero h1 {
+            font-size: 60px;
+            font-weight: 800;
+            line-height: 1.1;
+            margin-bottom: 20px;
+            letter-spacing: -0.02em;
+        }
+        .pricing-hero h1 span {
+            background: var(--sb-gradient-main);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .pricing-hero p {
+            font-size: 20px;
+            color: var(--sb-neutral);
+            max-width: 560px;
+            margin: 0 auto 40px;
+            line-height: 1.6;
+        }
+
+        /* ── Billing Toggle ─────────────────────────── */
+        .billing-toggle {
+            display: inline-flex;
+            align-items: center;
+            gap: 14px;
+            background: white;
+            border: 1px solid var(--sb-neutral-border);
+            border-radius: 50px;
+            padding: 6px 8px 6px 20px;
+            box-shadow: var(--sb-shadow-card);
+        }
+        .billing-toggle label {
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--sb-text-dark);
+            cursor: pointer;
+        }
+        .toggle-switch {
+            position: relative;
+            width: 48px; height: 26px;
+            cursor: pointer;
+        }
+        .toggle-switch input { display: none; }
+        .toggle-track {
+            position: absolute; inset: 0;
+            background: var(--sb-neutral-border);
+            border-radius: 50px;
+            transition: var(--sb-transition);
+        }
+        .toggle-track::after {
+            content: '';
+            position: absolute;
+            left: 3px; top: 3px;
+            width: 20px; height: 20px;
+            background: white;
+            border-radius: 50%;
+            transition: var(--sb-transition);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.15);
+        }
+        .toggle-switch input:checked ~ .toggle-track { background: var(--sb-primary); }
+        .toggle-switch input:checked ~ .toggle-track::after { transform: translateX(22px); }
+        .annual-badge {
+            background: #FFF3CD;
+            color: #856404;
+            font-size: 12px;
+            font-weight: 700;
+            padding: 4px 12px;
+            border-radius: 50px;
+            white-space: nowrap;
+        }
+
+        /* ── Pricing Grid ───────────────────────────── */
+        .pricing-section {
+            padding: 80px 0 100px;
+        }
+        .pricing-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+            align-items: start;
+        }
+        .pricing-card {
+            background: white;
+            border-radius: 20px;
+            border: 1.5px solid var(--sb-neutral-border);
+            padding: 32px 28px 28px;
+            display: flex;
+            flex-direction: column;
             transition: var(--sb-transition);
             position: relative;
         }
-        
-        .pricing-card.popular { 
-            border-color: var(--sb-primary); 
-            box-shadow: var(--sb-shadow-hover); 
-            transform: scale(1.05);
-            z-index: 2;
+        .pricing-card:hover {
+            transform: translateY(-6px);
+            box-shadow: var(--sb-shadow-hover);
         }
-        
-        .pricing-card:hover { transform: translateY(-10px); box-shadow: var(--sb-shadow-hover); }
-        
-        .plan-name { font-size: 14px; font-weight: 700; text-transform: uppercase; color: var(--sb-neutral); margin-bottom: 12px; letter-spacing: 0.1em; }
-        .plan-price { font-size: 48px; font-weight: 800; color: var(--sb-text-dark); margin-bottom: 8px; }
-        .plan-price span { font-size: 16px; font-weight: 500; color: var(--sb-neutral); }
-        .plan-annual { font-size: 14px; color: var(--sb-primary); font-weight: 600; margin-bottom: 32px; }
-        
-        .features-list { margin-bottom: 40px; flex-grow: 1; }
-        .features-list li { display: flex; align-items: flex-start; gap: 12px; margin-bottom: 16px; font-size: 15px; color: var(--sb-text-body); }
-        .features-list i { color: var(--sb-primary); flex-shrink: 0; margin-top: 3px; }
-        
-        .trial-badge { 
-            background: var(--sb-neutral-light); 
-            color: var(--sb-neutral); 
-            padding: 12px; 
-            text-align: center; 
-            border-radius: 12px; 
-            font-size: 13px; 
-            font-weight: 600; 
-            margin-top: auto; 
+        .pricing-card.popular {
+            border-color: var(--sb-primary);
+            box-shadow: 0 0 0 1px var(--sb-primary), var(--sb-shadow-hover);
+        }
+        .popular-tag {
+            position: absolute;
+            top: -14px; left: 50%;
+            transform: translateX(-50%);
+            background: var(--sb-gradient-main);
+            color: white;
+            font-size: 11px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            padding: 5px 16px;
+            border-radius: 50px;
+            white-space: nowrap;
         }
 
-        .popular-badge {
+        /* ── Card Internals ─────────────────────────── */
+        .plan-tier {
+            font-size: 11px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.12em;
+            color: var(--sb-neutral);
+            margin-bottom: 8px;
+        }
+        .plan-name {
+            font-size: 22px;
+            font-weight: 800;
+            color: var(--sb-text-dark);
+            margin-bottom: 4px;
+        }
+        .plan-tagline {
+            font-size: 13px;
+            color: var(--sb-neutral);
+            margin-bottom: 24px;
+            line-height: 1.5;
+            min-height: 40px;
+        }
+
+        .plan-price-wrap {
+            margin-bottom: 8px;
+        }
+        .plan-price {
+            font-size: 44px;
+            font-weight: 800;
+            color: var(--sb-text-dark);
+            line-height: 1;
+            letter-spacing: -0.02em;
+        }
+        .plan-price .currency { font-size: 22px; vertical-align: top; margin-top: 8px; display: inline-block; }
+        .plan-price .period { font-size: 14px; font-weight: 500; color: var(--sb-neutral); }
+        .plan-price.free-price { color: var(--sb-primary); }
+
+        .plan-annual-note {
+            font-size: 13px;
+            color: var(--sb-primary);
+            font-weight: 600;
+            margin-bottom: 24px;
+            min-height: 20px;
+        }
+
+        /* ── DM Allowance ───────────────────────────── */
+        .dm-allowance {
+            background: var(--sb-neutral-light);
+            border-radius: 10px;
+            padding: 12px 16px;
+            margin-bottom: 24px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .dm-allowance .dm-icon {
+            color: var(--sb-primary);
+            flex-shrink: 0;
+        }
+        .dm-allowance-text {
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--sb-text-dark);
+        }
+        .dm-allowance-text span {
+            font-weight: 500;
+            color: var(--sb-neutral);
+        }
+        .dm-tooltip {
+            display: inline-block;
+            position: relative;
+            cursor: help;
+            margin-left: 4px;
+        }
+        .dm-tooltip i { color: var(--sb-neutral); width: 14px; height: 14px; }
+        .dm-tooltip-text {
+            visibility: hidden;
+            opacity: 0;
+            width: 220px;
+            background: var(--sb-text-dark);
+            color: white;
+            text-align: left;
+            border-radius: 10px;
+            padding: 10px 14px;
+            font-size: 12px;
+            font-weight: 400;
+            line-height: 1.5;
             position: absolute;
-            top: -15px;
+            z-index: 100;
+            bottom: calc(100% + 8px);
             left: 50%;
             transform: translateX(-50%);
-            background: var(--sb-primary);
-            color: white;
-            padding: 4px 16px;
-            border-radius: 20px;
-            font-size: 12px;
-            font-weight: 700;
-            text-transform: uppercase;
+            transition: opacity 0.2s ease;
+            pointer-events: none;
+        }
+        .dm-tooltip-text::after {
+            content: '';
+            position: absolute;
+            top: 100%; left: 50%;
+            transform: translateX(-50%);
+            border: 6px solid transparent;
+            border-top-color: var(--sb-text-dark);
+        }
+        .dm-tooltip:hover .dm-tooltip-text {
+            visibility: visible;
+            opacity: 1;
         }
 
-        @media (max-width: 991px) {
-            .pricing-grid { grid-template-columns: 1fr; padding: 40px 24px; }
-            .pricing-card.popular { transform: scale(1); }
+        /* ── Features List ──────────────────────────── */
+        .features-list { flex-grow: 1; margin-bottom: 28px; }
+        .features-list li {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            margin-bottom: 12px;
+            font-size: 14px;
+            color: var(--sb-text-body);
+            line-height: 1.4;
+        }
+        .features-list .check-icon {
+            color: var(--sb-primary);
+            flex-shrink: 0;
+            margin-top: 1px;
+        }
+        .features-list .section-label {
+            font-size: 11px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--sb-neutral);
+            margin: 16px 0 6px;
+            display: block;
+        }
+        .features-list .inherit-item {
+            font-style: italic;
+            color: var(--sb-neutral);
+        }
+
+        /* ── Overage Note ───────────────────────────── */
+        .overage-note {
+            background: #FFF8E1;
+            border: 1px solid #FFE082;
+            border-radius: 10px;
+            padding: 10px 14px;
+            font-size: 12px;
+            color: #6D4C41;
+            font-weight: 600;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .overage-note i { color: #F9A825; flex-shrink: 0; }
+
+        /* ── CTA Button ─────────────────────────────── */
+        .plan-cta {
+            width: 100%;
+            padding: 14px;
+            border-radius: 50px;
+            font-size: 15px;
+            font-weight: 700;
+            cursor: pointer;
+            border: none;
+            transition: var(--sb-transition);
+            text-align: center;
+            display: block;
+        }
+        .plan-cta.primary {
+            background: var(--sb-primary);
+            color: white;
+        }
+        .plan-cta.primary:hover {
+            background: var(--sb-primary-hover);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0,128,96,0.25);
+        }
+        .plan-cta.secondary {
+            background: var(--sb-primary-light);
+            color: var(--sb-primary);
+        }
+        .plan-cta.secondary:hover {
+            background: #d0ede7;
+            transform: translateY(-2px);
+        }
+        .plan-cta.enterprise {
+            background: var(--sb-secondary);
+            color: white;
+        }
+        .plan-cta.enterprise:hover {
+            background: var(--sb-primary-hover);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0,76,63,0.3);
+        }
+        .plan-cta-note {
+            text-align: center;
+            font-size: 12px;
+            color: var(--sb-neutral);
+            margin-top: 10px;
+        }
+
+        /* ── FAQ / Billing Info ─────────────────────── */
+        .billing-info {
+            background: var(--sb-neutral-light);
+            border-radius: 20px;
+            padding: 40px;
+            max-width: 900px;
+            margin: 0 auto 60px;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 32px;
+        }
+        .billing-item h4 {
+            font-size: 15px;
+            font-weight: 700;
+            color: var(--sb-text-dark);
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .billing-item h4 i { color: var(--sb-primary); width: 18px; height: 18px; }
+        .billing-item p { font-size: 13px; color: var(--sb-neutral); line-height: 1.6; }
+
+        /* ── Divider ────────────────────────────────── */
+        .price-divider { border: 0; border-top: 1px solid var(--sb-neutral-border); margin: 20px 0; }
+
+        /* ── Responsive ─────────────────────────────── */
+        @media (max-width: 1100px) {
+            .pricing-grid { grid-template-columns: repeat(2, 1fr); }
+            .pricing-hero h1 { font-size: 44px; }
+        }
+        @media (max-width: 700px) {
+            .pricing-grid { grid-template-columns: 1fr; }
+            .pricing-hero h1 { font-size: 36px; }
+            .billing-info { grid-template-columns: 1fr; }
+            .pricing-hero { padding: 120px 0 60px; }
         }
     </style>
 </head>
 <body>
+
+    <!-- Header -->
     <header>
         <div class="container nav-container">
-            <nav style="height: 80px; display: flex; justify-content: space-between; align-items: center;">
-                <div class="logo-wrapper" style="display: flex; align-items: center; gap: 10px;">
-                    <span class="logo-text" style="font-size: 24px; font-weight: 800; color: #008060; display: flex; flex-direction: column;">
-                        SHOPBOX <small style="display: block; font-size: 10px; font-weight: 500; color: #616161; text-transform: uppercase;">by Adberry</small>
-                    </span>
+            <nav>
+                <div class="logo-wrapper">
+                    <span class="logo-text">SHOPBOX <small>by Adberry</small></span>
                 </div>
                 <div style="display: flex; gap: 30px; align-items: center;">
                     <a href="/" class="nav-link" style="font-weight: 600; font-size: 15px;">Home</a>
@@ -99,73 +399,250 @@
         </div>
     </header>
 
+    <!-- Hero -->
     <div class="pricing-hero">
         <div class="container">
-            <h1>Simple, Transparent Pricing</h1>
-            <p>Choose the plan that's right for your growth. Scale your social sales with precision.</p>
+            <div class="badge" style="margin-bottom: 24px;">
+                <i data-lucide="sparkles" style="width: 14px; height: 14px;"></i>
+                Simple, Transparent Pricing
+            </div>
+            <h1>Pricing that scales with<br><span>your success</span></h1>
+            <p>Start free and grow at your own pace. Upgrade when your store needs more power. All billed through Shopify — no hidden fees.</p>
+
+            <!-- Billing Toggle -->
+            <div class="billing-toggle">
+                <label for="billing-toggle-input">Monthly</label>
+                <label class="toggle-switch" for="billing-toggle-input">
+                    <input type="checkbox" id="billing-toggle-input">
+                    <div class="toggle-track"></div>
+                </label>
+                <label for="billing-toggle-input" style="font-weight: 600;">Annual</label>
+                <span class="annual-badge">Save 20%</span>
+            </div>
         </div>
     </div>
 
-    <div class="pricing-grid container">
-        <!-- Free Plan -->
-        <div class="pricing-card">
-            <span class="plan-name">Free</span>
-            <div class="plan-price">Free</div>
-            <p style="margin-bottom: 40px; color: var(--sb-neutral); font-size: 14px;">Perfect for exploring possibilities.</p>
-            <ul class="features-list">
-                <li><i data-lucide="check" style="width: 18px; height: 18px;"></i> 1 channel (Instagram only)</li>
-                <li><i data-lucide="check" style="width: 18px; height: 18px;"></i> Up to 10 orders/month</li>
-                <li><i data-lucide="check" style="width: 18px; height: 18px;"></i> Shopbox branding on messages</li>
-            </ul>
-            <button class="btn-secondary" style="margin-top: 20px;">Install Free</button>
-        </div>
+    <!-- Pricing Cards -->
+    <section class="pricing-section">
+        <div class="container">
+            <div class="pricing-grid">
 
-        <!-- Starter Plan -->
-        <div class="pricing-card popular">
-            <div class="popular-badge">Best Value</div>
-            <span class="plan-name">Starter</span>
-            <div class="plan-price">$19.99 <span>/mo</span></div>
-            <div class="plan-annual">or $200 /year (save 17%)</div>
-            <ul class="features-list">
-                <li><i data-lucide="check" style="width: 18px; height: 18px;"></i> Instagram Comment Automation</li>
-                <li><i data-lucide="check" style="width: 18px; height: 18px;"></i> Instagram & Messenger DM Bot</li>
-                <li><i data-lucide="check" style="width: 18px; height: 18px;"></i> Post-to-Product Mapping</li>
-                <li><i data-lucide="check" style="width: 18px; height: 18px;"></i> Order Management Dashboard</li>
-                <li><i data-lucide="check" style="width: 18px; height: 18px;"></i> 14-day free trial</li>
-            </ul>
-            <button class="btn-primary" style="margin-top: 20px;">Start Starter Trial</button>
-            <div class="trial-badge">14-day free trial</div>
-        </div>
+                <!-- ── FREE ── -->
+                <div class="pricing-card">
+                    <div class="plan-tier">Tier 1</div>
+                    <div class="plan-name">Free</div>
+                    <p class="plan-tagline">For micro-influencers and stores just getting started.</p>
 
-        <!-- Pro Plan -->
-        <div class="pricing-card">
-            <span class="plan-name">Pro</span>
-            <div class="plan-price">$49.99 <span>/mo</span></div>
-            <div class="plan-annual">or $500 /year (save 17%)</div>
-            <ul class="features-list">
-                <li><i data-lucide="check" style="width: 18px; height: 18px;"></i> Everything in Starter</li>
-                <li><i data-lucide="check" style="width: 18px; height: 18px;"></i> Facebook Messenger Bot</li>
-                <li><i data-lucide="check" style="width: 18px; height: 18px;"></i> Cross-channel Analytics</li>
-                <li><i data-lucide="check" style="width: 18px; height: 18px;"></i> Priority support</li>
-                <li><i data-lucide="check" style="width: 18px; height: 18px;"></i> 14-day free trial</li>
-            </ul>
-            <button class="btn-secondary" style="margin-top: 20px;">Start Pro Trial</button>
-            <div class="trial-badge">14-day free trial</div>
-        </div>
-    </div>
+                    <div class="plan-price-wrap">
+                        <div class="plan-price free-price">$0</div>
+                    </div>
+                    <div class="plan-annual-note">Free forever</div>
 
-    <div class="container" style="text-align: center; margin-bottom: 100px;">
-        <p style="color: var(--sb-neutral); font-size: 14px;">All charges are billed in USD. Recurring and usage-based charges are billed every 30 days.</p>
-    </div>
+                    <div class="dm-allowance">
+                        <i data-lucide="message-circle" class="dm-icon" style="width:18px;height:18px;"></i>
+                        <div class="dm-allowance-text">
+                            100 Automated DMs / mo
+                            <span class="dm-tooltip">
+                                <i data-lucide="info"></i>
+                                <span class="dm-tooltip-text">One Automated DM = one successful message sent in response to a qualifying Instagram comment trigger.</span>
+                            </span>
+                        </div>
+                    </div>
 
+                    <hr class="price-divider">
+
+                    <ul class="features-list">
+                        <li><i data-lucide="check" class="check-icon" style="width:16px;height:16px;"></i> 1 Connected Social Account</li>
+                        <li><i data-lucide="check" class="check-icon" style="width:16px;height:16px;"></i> Instagram or Messenger (choose one)</li>
+                        <li><i data-lucide="check" class="check-icon" style="width:16px;height:16px;"></i> Up to 3 Active Comment Triggers</li>
+                        <li><i data-lucide="check" class="check-icon" style="width:16px;height:16px;"></i> Basic Product Cards</li>
+                        <li><i data-lucide="check" class="check-icon" style="width:16px;height:16px;"></i> "Powered by Shopbox" branding</li>
+                    </ul>
+
+                    <button class="plan-cta secondary">Install Free</button>
+                    <p class="plan-cta-note">No credit card required</p>
+                </div>
+
+                <!-- ── STARTER ── -->
+                <div class="pricing-card">
+                    <div class="plan-tier">Tier 2</div>
+                    <div class="plan-name">Starter</div>
+                    <p class="plan-tagline">A no-brainer expense for serious creators and boutiques globally.</p>
+
+                    <div class="plan-price-wrap">
+                        <div class="plan-price">
+                            <span class="currency">$</span><span class="monthly-price">19</span><span class="annual-price" style="display:none;">15</span><span class="period"> /mo</span>
+                        </div>
+                    </div>
+                    <div class="plan-annual-note">
+                        <span class="monthly-note">or $182/year — save $46 with annual</span>
+                        <span class="annual-note" style="display:none;">Billed $182/year · $46 saved vs. monthly</span>
+                    </div>
+
+                    <div class="dm-allowance">
+                        <i data-lucide="message-circle" class="dm-icon" style="width:18px;height:18px;"></i>
+                        <div class="dm-allowance-text">
+                            1,000 Automated DMs / mo
+                            <span class="dm-tooltip">
+                                <i data-lucide="info"></i>
+                                <span class="dm-tooltip-text">One Automated DM = one successful message sent in response to a qualifying Instagram comment trigger.</span>
+                            </span>
+                        </div>
+                    </div>
+
+                    <hr class="price-divider">
+
+                    <ul class="features-list">
+                        <li><i data-lucide="check" class="check-icon" style="width:16px;height:16px;"></i> 2 Connected Social Accounts</li>
+                        <li><i data-lucide="check" class="check-icon" style="width:16px;height:16px;"></i> Instagram + Messenger</li>
+                        <li><i data-lucide="check" class="check-icon" style="width:16px;height:16px;"></i> Unlimited Comment Triggers</li>
+                        <li><i data-lucide="check" class="check-icon" style="width:16px;height:16px;"></i> Remove "Powered by Shopbox" branding</li>
+                        <li><i data-lucide="check" class="check-icon" style="width:16px;height:16px;"></i> Basic Analytics (DMs sent, clicks)</li>
+                        <li><i data-lucide="check" class="check-icon" style="width:16px;height:16px;"></i> Post-to-Product Mapping</li>
+                        <li><i data-lucide="check" class="check-icon" style="width:16px;height:16px;"></i> Order Management Dashboard</li>
+                    </ul>
+
+                    <button class="plan-cta secondary">Start 14-Day Free Trial</button>
+                    <p class="plan-cta-note">No credit card required</p>
+                </div>
+
+                <!-- ── GROWTH (POPULAR) ── -->
+                <div class="pricing-card popular">
+                    <div class="popular-tag">⚡ Most Popular</div>
+                    <div class="plan-tier">Tier 3</div>
+                    <div class="plan-name">Growth</div>
+                    <p class="plan-tagline">For brands running Meta Ads and needing robust automation at scale.</p>
+
+                    <div class="plan-price-wrap">
+                        <div class="plan-price">
+                            <span class="currency">$</span><span class="monthly-price">49</span><span class="annual-price" style="display:none;">39</span><span class="period"> /mo</span>
+                        </div>
+                    </div>
+                    <div class="plan-annual-note">
+                        <span class="monthly-note">or $470/year — save $118 with annual</span>
+                        <span class="annual-note" style="display:none;">Billed $470/year · $118 saved vs. monthly</span>
+                    </div>
+
+                    <div class="dm-allowance">
+                        <i data-lucide="message-circle" class="dm-icon" style="width:18px;height:18px;"></i>
+                        <div class="dm-allowance-text">
+                            5,000 Automated DMs / mo
+                            <span class="dm-tooltip">
+                                <i data-lucide="info"></i>
+                                <span class="dm-tooltip-text">One Automated DM = one successful message sent in response to a qualifying Instagram comment trigger.</span>
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="overage-note">
+                        <i data-lucide="alert-triangle" style="width:14px;height:14px;"></i>
+                        +$0.01 per DM beyond 5,000 — you'll be notified at 80%
+                    </div>
+
+                    <hr class="price-divider">
+
+                    <ul class="features-list">
+                        <li class="inherit-item"><i data-lucide="check" class="check-icon" style="width:16px;height:16px;"></i> Everything in Starter</li>
+                        <span class="section-label">Advanced Features</span>
+                        <li><i data-lucide="check" class="check-icon" style="width:16px;height:16px;"></i> Up to 5 Connected Social Accounts</li>
+                        <li><i data-lucide="check" class="check-icon" style="width:16px;height:16px;"></i> Advanced Analytics &amp; Conversion Tracking</li>
+                        <li><i data-lucide="check" class="check-icon" style="width:16px;height:16px;"></i> Revenue Generated Dashboard</li>
+                        <li><i data-lucide="check" class="check-icon" style="width:16px;height:16px;"></i> Smart Message Fallbacks</li>
+                        <li><i data-lucide="check" class="check-icon" style="width:16px;height:16px;"></i> Priority Email Support</li>
+                    </ul>
+
+                    <button class="plan-cta primary">Start 14-Day Free Trial</button>
+                    <p class="plan-cta-note">No credit card required</p>
+                </div>
+
+                <!-- ── SCALE ── -->
+                <div class="pricing-card">
+                    <div class="plan-tier">Tier 4</div>
+                    <div class="plan-name">Scale</div>
+                    <p class="plan-tagline">For agencies and mega-viral stores managing massive volumes.</p>
+
+                    <div class="plan-price-wrap">
+                        <div class="plan-price">
+                            <span class="currency">$</span><span class="monthly-price">149</span><span class="annual-price" style="display:none;">119</span><span class="period"> /mo</span>
+                        </div>
+                    </div>
+                    <div class="plan-annual-note">
+                        <span class="monthly-note">or $1,430/year — save $358 with annual</span>
+                        <span class="annual-note" style="display:none;">Billed $1,430/year · $358 saved vs. monthly</span>
+                    </div>
+
+                    <div class="dm-allowance">
+                        <i data-lucide="message-circle" class="dm-icon" style="width:18px;height:18px;"></i>
+                        <div class="dm-allowance-text">
+                            25,000 Automated DMs / mo
+                            <span class="dm-tooltip">
+                                <i data-lucide="info"></i>
+                                <span class="dm-tooltip-text">One Automated DM = one successful message sent in response to a qualifying Instagram comment trigger.</span>
+                            </span>
+                        </div>
+                    </div>
+
+                    <hr class="price-divider">
+
+                    <ul class="features-list">
+                        <li class="inherit-item"><i data-lucide="check" class="check-icon" style="width:16px;height:16px;"></i> Everything in Growth</li>
+                        <span class="section-label">Enterprise Features</span>
+                        <li><i data-lucide="check" class="check-icon" style="width:16px;height:16px;"></i> Unlimited Connected Social Accounts</li>
+                        <li><i data-lucide="check" class="check-icon" style="width:16px;height:16px;"></i> White-glove Onboarding via Zoom</li>
+                        <li><i data-lucide="check" class="check-icon" style="width:16px;height:16px;"></i> Dedicated Account Manager</li>
+                        <li><i data-lucide="check" class="check-icon" style="width:16px;height:16px;"></i> Early Access to New Integrations</li>
+                        <li><i data-lucide="check" class="check-icon" style="width:16px;height:16px;"></i> Custom SLA &amp; Uptime Guarantee</li>
+                    </ul>
+
+                    <button class="plan-cta enterprise">Start 14-Day Free Trial</button>
+                    <p class="plan-cta-note">No credit card required</p>
+                </div>
+
+            </div><!-- /pricing-grid -->
+
+            <!-- Billing Info -->
+            <div class="billing-info" style="margin-top: 60px;">
+                <div class="billing-item">
+                    <h4><i data-lucide="shield-check"></i> Billing via Shopify</h4>
+                    <p>All charges are processed securely through Shopify's Billing API. No separate payment method needed — it's added to your existing Shopify bill.</p>
+                </div>
+                <div class="billing-item">
+                    <h4><i data-lucide="dollar-sign"></i> USD Pricing</h4>
+                    <p>Prices are in USD, the global standard for Shopify apps. Shopify handles local currency conversion for your region automatically.</p>
+                </div>
+                <div class="billing-item">
+                    <h4><i data-lucide="calendar"></i> Cancel Anytime</h4>
+                    <p>No long-term contracts. Cancel your plan at any time from within your Shopify admin. Annual plans are non-refundable after 30 days.</p>
+                </div>
+            </div>
+
+        </div><!-- /container -->
+    </section>
+
+    <!-- Footer -->
     <footer style="padding: 60px 0; background: var(--sb-neutral-light); text-align: center;">
         <div class="container">
-            <p style="color: var(--sb-neutral); font-size: 14px;">&copy; 2026 Shopbox by Adberry. All rights reserved. | <a href="/privacy">Privacy</a> | <a href="/terms">Terms</a></p>
+            <p style="color: var(--sb-neutral); font-size: 14px;">&copy; 2026 Shopbox by Adberry. All rights reserved. | <a href="/privacy" style="color: var(--sb-primary);">Privacy</a> | <a href="/terms" style="color: var(--sb-primary);">Terms</a></p>
         </div>
     </footer>
 
     <script>
         lucide.createIcons();
+
+        // Billing Toggle Logic
+        const toggle = document.getElementById('billing-toggle-input');
+        const monthlyPrices = document.querySelectorAll('.monthly-price');
+        const annualPrices = document.querySelectorAll('.annual-price');
+        const monthlyNotes = document.querySelectorAll('.monthly-note');
+        const annualNotes = document.querySelectorAll('.annual-note');
+
+        toggle.addEventListener('change', () => {
+            const isAnnual = toggle.checked;
+            monthlyPrices.forEach(el => el.style.display = isAnnual ? 'none' : 'inline');
+            annualPrices.forEach(el => el.style.display = isAnnual ? 'inline' : 'none');
+            monthlyNotes.forEach(el => el.style.display = isAnnual ? 'none' : 'inline');
+            annualNotes.forEach(el => el.style.display = isAnnual ? 'inline' : 'none');
+        });
     </script>
 </body>
 </html>
